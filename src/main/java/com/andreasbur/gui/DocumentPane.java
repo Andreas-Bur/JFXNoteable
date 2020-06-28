@@ -36,6 +36,9 @@ public class DocumentPane extends VBox {
 						page.addEventFilter(MouseEvent.MOUSE_CLICKED, event -> selectedPage.set(page));
 					}
 				}
+				if (c.getRemoved().contains(selectedPage.get())) {
+					selectedPage.set(null);
+				}
 			}
 			for (int i = 0; i < pageList.size(); i++) {
 				pageList.get(i).setPageIndex(i + 1);

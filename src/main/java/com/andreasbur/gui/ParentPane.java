@@ -4,10 +4,12 @@ import com.andreasbur.actions.ActionHandler;
 import com.andreasbur.util.ZoomHandler;
 import javafx.scene.control.SplitPane;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.VBox;
 
 public class ParentPane extends BorderPane {
 
 	private final StatusBar statusBar;
+	private final MyMenuBar menuBar;
 	private final ToolbarPane toolbarPane;
 	private final DocumentPane documentPane;
 	private final DocumentScalePane documentScalePane;
@@ -22,18 +24,20 @@ public class ParentPane extends BorderPane {
 		actionHandler = new ActionHandler();
 
 		documentPane = new DocumentPane(this);
+		menuBar = new MyMenuBar(actionHandler);
 		toolbarPane = new ToolbarPane(documentPane, actionHandler);
 		documentScalePane = new DocumentScalePane(zoomHandler,documentPane);
 		documentSideBar = new DocumentSideBar(documentPane);
 		statusBar = new StatusBar(this);
-
 
 		SplitPane middleSplitPane = new SplitPane();
 		middleSplitPane.setDividerPosition(0, 0.1);
 		SplitPane.setResizableWithParent(documentSideBar, false);
 		middleSplitPane.getItems().addAll(documentSideBar, documentScalePane);
 
-		setTop(toolbarPane);
+		VBox topPane = new VBox(menuBar, toolbarPane);
+
+		setTop(topPane);
 		setBottom(statusBar);
 		setCenter(middleSplitPane);
 

@@ -43,6 +43,6 @@ public class NewPageAction extends Action {
 
 	@Override
 	void undo() {
-		documentPane.getPageList().remove(index);
+		documentPane.getPageList().remove(page);
 	}
 }
