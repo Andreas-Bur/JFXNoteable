@@ -10,7 +10,6 @@ import javafx.geometry.Dimension2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.StackPane;
@@ -41,7 +40,7 @@ public class Page extends StackPane {
 
 	public Page(Dimension2D dimension, Orientation orientation) {
 
-		this.pageLayout = new PageLayout(dimension, orientation);
+		pageLayout = new PageLayout(dimension, orientation);
 		previewImage = new SimpleObjectProperty<>();
 		pageIndex = new SimpleIntegerProperty();
 		snapshotPane = new StackPane();

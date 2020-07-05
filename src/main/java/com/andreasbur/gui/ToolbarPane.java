@@ -3,17 +3,35 @@ package com.andreasbur.gui;
 import com.andreasbur.actions.ActionHandler;
 import com.andreasbur.actions.NewPageAction;
 import com.andreasbur.actions.RotatePageAction;
+import com.andreasbur.tools.ToolFactory;
 import javafx.scene.control.Button;
+import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToolBar;
-import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.VBox;
 
-public class ToolbarPane extends AnchorPane {
+public class ToolbarPane extends VBox {
 
-	public ToolbarPane(DocumentPane documentPane, ActionHandler actionHandler) {
+	private final DocumentPane documentPane;
+	private final ActionHandler actionHandler;
+
+	private final ToolFactory toolFactory;
+
+	public ToolbarPane(DocumentPane documentPane, ActionHandler actionHandler, ToolFactory toolFactory) {
+
+		this.documentPane = documentPane;
+		this.actionHandler = actionHandler;
+		this.toolFactory = toolFactory;
+
+		setFillWidth(true);
+
+		ToolBar topToolBar = createTopToolbar();
+		ToolBar bottomToolBar = createBottomToolbar();
+
+		this.getChildren().addAll(topToolBar, bottomToolBar);
+	}
+
+	private ToolBar createTopToolbar() {
 		ToolBar toolBar = new ToolBar();
-
-		AnchorPane.setLeftAnchor(toolBar, 0d);
-		AnchorPane.setRightAnchor(toolBar, 0d);
 
 		Button addPageButton = new Button("add page");
 		addPageButton.setOnAction(event -> {
@@ -30,6 +48,21 @@ public class ToolbarPane extends AnchorPane {
 
 		toolBar.getItems().addAll(addPageButton, rotatePageButton);
 
-		this.getChildren().add(toolBar);
+		return toolBar;
+	}
+
+	private ToolBar createBottomToolbar() {
+		ToolBar toolBar = new ToolBar();
+
+		ToggleButton handToolButton = toolFactory.createHandToolButton();
+		handToolButton.setSelected(true);
+
+		ToggleButton penToolButton = toolFactory.createPenToolButton();
+
+		ToggleButton eraserToolButton = toolFactory.createEraserToolButton();
+
+		toolBar.getItems().addAll(handToolButton, penToolButton, eraserToolButton);
+
+		return toolBar;
 	}
 }

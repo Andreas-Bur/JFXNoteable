@@ -1,25 +1,24 @@
 package com.andreasbur.gui;
 
+import com.andreasbur.util.ScrollHandler;
 import com.andreasbur.util.ZoomHandler;
 import javafx.geometry.Bounds;
-import javafx.geometry.Pos;
-import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.input.ScrollEvent;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class DocumentScalePane extends ScrollPane {
 
-	ZoomHandler zoomHandler;
+	private final ZoomHandler zoomHandler;
+	private final ScrollHandler scrollHandler;
 
-	public DocumentScalePane(ZoomHandler zoomHandler, VBox content) {
+	public DocumentScalePane(DocumentPane documentPane, ZoomHandler zoomHandler, ScrollHandler scrollHandler) {
 		super();
 
 		this.zoomHandler = zoomHandler;
+		this.scrollHandler = scrollHandler;
 
 		setHbarPolicy(ScrollBarPolicy.AS_NEEDED);
 		setVbarPolicy(ScrollBarPolicy.AS_NEEDED);
@@ -27,12 +26,9 @@ public class DocumentScalePane extends ScrollPane {
 		setFitToWidth(true);
 		setStyle("-fx-background: #D3D3D3;"); // Color.LIGHTGRAY
 
-		Group zoomGroup = new Group(content);
-		content.setManaged(true);
+		setContent(documentPane);
 
-		StackPane centeredPane = new StackPane(zoomGroup);
-		centeredPane.setAlignment(Pos.TOP_CENTER);
-		setContent(centeredPane);
+		pannableProperty().bind(scrollHandler.pannableProperty());
 
 		addEventFilter(ScrollEvent.ANY, e -> {
 			if (e.isControlDown()) {
@@ -48,13 +44,13 @@ public class DocumentScalePane extends ScrollPane {
 		AtomicBoolean keepOldVvalue = new AtomicBoolean(false);
 
 		zoomHandler.scaleProperty().addListener((observable, oldValue, newValue) -> {
-			content.setScaleX(zoomHandler.getZoomFactor());
-			content.setScaleY(zoomHandler.getZoomFactor());
+			documentPane.getPageBox().setScaleX(zoomHandler.getZoomFactor());
+			documentPane.getPageBox().setScaleY(zoomHandler.getZoomFactor());
 			keepOldVvalue.set(true);
 		});
 
 		vvalueProperty().addListener((observable, oldValue, newValue) -> {
-			if(keepOldVvalue.get()){
+			if (keepOldVvalue.get()) {
 				keepOldVvalue.set(false);
 				setVvalue(oldValue.doubleValue());
 			}

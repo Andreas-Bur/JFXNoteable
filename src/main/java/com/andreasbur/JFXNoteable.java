@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
 
 public class JFXNoteable extends Application {
 
-    private static Scene scene = null;
+    private Scene scene = null;
     public static final Logger LOGGER = LoggerFactory.getLogger(JFXNoteable.class);
 
     @Override
