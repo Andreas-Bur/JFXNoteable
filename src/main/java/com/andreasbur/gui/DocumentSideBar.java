@@ -1,6 +1,7 @@
 package com.andreasbur.gui;
 
 import com.andreasbur.gui.page.Page;
+import com.andreasbur.gui.page.PageLayout;
 import com.andreasbur.gui.page.PagePreview;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.DoubleProperty;
@@ -9,7 +10,6 @@ import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
-import javafx.geometry.Dimension2D;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.ScrollPane;
@@ -45,7 +45,7 @@ public class DocumentSideBar extends ScrollPane {
 
 		setContent(pagePreviewPane);
 
-		ChangeListener<? super Dimension2D> maxPageWidthListener = (observable, oldValue, newValue) -> updateMaxPageWidth();
+		ChangeListener<? super PageLayout> maxPageWidthListener = (observable, oldValue, newValue) -> updateMaxPageWidth();
 
 		pageList.addListener((ListChangeListener<? super Page>) c -> {
 			updateMaxPageWidth();
@@ -54,10 +54,10 @@ public class DocumentSideBar extends ScrollPane {
 				if (c.wasAdded()) {
 					for (Page page : c.getAddedSubList()) {
 						page.getPagePreview().getImageView().fitWidthProperty().bind(widthProperty()
-								.multiply(Bindings.createDoubleBinding(() -> page.getPageLayout().getPageSize().getWidth(), page.getPageLayout().pageSizeProperty()))
+								.multiply(Bindings.createDoubleBinding(() -> page.getPageLayout().getPageSize().getWidth(), page.pageLayoutProperty()))
 								.divide(maxPageWidth)
 								.subtract(50));
-						page.getPageLayout().pageSizeProperty().addListener(maxPageWidthListener);
+						page.pageLayoutProperty().addListener(maxPageWidthListener);
 					}
 				}
 			}

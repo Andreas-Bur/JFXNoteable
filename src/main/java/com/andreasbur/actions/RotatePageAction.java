@@ -21,11 +21,11 @@ public class RotatePageAction extends Action {
 
 	@Override
 	void execute() {
-		page.getPageLayout().swapOrientation();
+		page.setPageLayout(page.getPageLayout().toRotatedLayout());
 	}
 
 	@Override
 	void undo() {
-		page.getPageLayout().swapOrientation();
+		page.setPageLayout(page.getPageLayout().toRotatedLayout());
 	}
 }

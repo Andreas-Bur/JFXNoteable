@@ -17,14 +17,14 @@ import javafx.scene.paint.Color;
 
 public class Page extends StackPane {
 
-	public static final Dimension2D A3 = new Dimension2D(297, 420);
-	public static final Dimension2D A4 = new Dimension2D(210, 297);
-	public static final Dimension2D A5 = new Dimension2D(148, 210);
+	public static final PageLayout A3 = new PageLayout(new Dimension2D(297, 420));
+	public static final PageLayout A4 = new PageLayout(new Dimension2D(210, 297));
+	public static final PageLayout A5 = new PageLayout(new Dimension2D(148, 210));
 
 	private static final DropShadow pageShadow = new DropShadow(10, 3, 3, Color.BLACK);
 
 	private final SimpleObjectProperty<Image> previewImage;
-	private final PageLayout pageLayout;
+	private final SimpleObjectProperty<PageLayout> pageLayout;
 	private final IntegerProperty pageIndex;
 
 	private final StackPane snapshotPane;
@@ -34,17 +34,13 @@ public class Page extends StackPane {
 		PORTRAIT, LANDSCAPE
 	}
 
-	public Page(Dimension2D dimension) {
-		this(dimension, dimension.getWidth() > dimension.getHeight() ? Orientation.LANDSCAPE : Orientation.PORTRAIT);
-	}
+	public Page(PageLayout pageLayout) {
 
-	public Page(Dimension2D dimension, Orientation orientation) {
-
-		pageLayout = new PageLayout(dimension, orientation);
-		previewImage = new SimpleObjectProperty<>();
-		pageIndex = new SimpleIntegerProperty();
-		snapshotPane = new StackPane();
-		pagePreview = new PagePreview(this);
+		this.pageLayout = new SimpleObjectProperty<>(pageLayout);
+		this.previewImage = new SimpleObjectProperty<>();
+		this.pageIndex = new SimpleIntegerProperty();
+		this.snapshotPane = new StackPane();
+		this.pagePreview = new PagePreview(this);
 
 		snapshotPane.setBackground(new Background(new BackgroundFill(Color.WHITE, null, null)));
 		setEffect(pageShadow);
@@ -56,9 +52,9 @@ public class Page extends StackPane {
 		snapshotPane.getChildren().add(canvas);
 		getChildren().add(snapshotPane);
 
-		pageLayout.pageSizeProperty().addListener((observable, oldValue, newValue) -> {
-			canvas.setWidth(ScreenUtil.convertMmToPx(newValue.getWidth()));
-			canvas.setHeight(ScreenUtil.convertMmToPx(newValue.getHeight()));
+		pageLayoutProperty().addListener((observable, oldValue, newValue) -> {
+			canvas.setWidth(ScreenUtil.convertMmToPx(getPageLayout().getPageSize().getWidth()));
+			canvas.setHeight(ScreenUtil.convertMmToPx(getPageLayout().getPageSize().getHeight()));
 			updatePreviewImage();
 		});
 	}
@@ -76,7 +72,15 @@ public class Page extends StackPane {
 	}
 
 	public PageLayout getPageLayout() {
+		return pageLayout.get();
+	}
+
+	public SimpleObjectProperty<PageLayout> pageLayoutProperty() {
 		return pageLayout;
+	}
+
+	public void setPageLayout(PageLayout pageLayout) {
+		this.pageLayout.set(pageLayout);
 	}
 
 	public int getPageIndex() {

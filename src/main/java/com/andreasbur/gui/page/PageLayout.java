@@ -1,71 +1,61 @@
 package com.andreasbur.gui.page;
 
-import javafx.beans.binding.Bindings;
-import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.Dimension2D;
 
 import java.util.Objects;
 
 public class PageLayout {
 
-	private final SimpleObjectProperty<Dimension2D> pageSize = new SimpleObjectProperty<>();
-	private final SimpleObjectProperty<Page.Orientation> orientation = new SimpleObjectProperty<>();
+	private final Dimension2D pageSize;
 
-	public PageLayout(Dimension2D dimension, Page.Orientation orientation) {
-
-		Bindings.createDoubleBinding(() -> pageSize.get().getWidth(), pageSize);
-
-		pageSize.set(dimension);
-
-		pageSize.addListener((observable, oldValue, newValue) -> {
-			if (isInvalid(newValue.getWidth(), newValue.getHeight(), getOrientation())) {
-				swapOrientation();
-			}
-		});
-
-		this.orientation.addListener((observable, oldValue, newValue) -> {
-			if (isInvalid(pageSize.get().getWidth(), pageSize.get().getHeight(), newValue)) {
-				pageSize.set(new Dimension2D(pageSize.get().getHeight(), pageSize.get().getWidth()));
-			}
-		});
-
-		this.orientation.set(orientation);
+	public PageLayout(Dimension2D pageSize) {
+		this(pageSize, null);
 	}
 
-	private boolean isInvalid(double width, double height, Page.Orientation orientation) {
-		return (orientation == Page.Orientation.PORTRAIT && (width > height)) || (orientation == Page.Orientation.LANDSCAPE && (height > width));
-	}
-
-	public void swapOrientation() {
-		if (getOrientation() == Page.Orientation.PORTRAIT) {
-			setOrientation(Page.Orientation.LANDSCAPE);
+	public PageLayout(Dimension2D pageSize, Page.Orientation orientation) {
+		if (pageSize == null) {
+			throw new IllegalArgumentException("pageSize must not be null");
+		}
+		if (orientation == null) {
+			this.pageSize = pageSize;
 		} else {
-			setOrientation(Page.Orientation.PORTRAIT);
+			this.pageSize = calcPageSize(pageSize, orientation);
+		}
+	}
+
+	private Dimension2D calcPageSize(Dimension2D pageSize, Page.Orientation orientation) {
+		double max = Math.max(pageSize.getWidth(), pageSize.getHeight());
+		double min = Math.min(pageSize.getWidth(), pageSize.getHeight());
+
+		if (orientation == Page.Orientation.PORTRAIT) {
+			return new Dimension2D(min, max);
+		} else {
+			return new Dimension2D(max, min);
 		}
 	}
 
 	public Dimension2D getPageSize() {
-		return pageSize.get();
-	}
-
-	public SimpleObjectProperty<Dimension2D> pageSizeProperty() {
 		return pageSize;
 	}
 
-	public void setPageSize(Dimension2D pageSize) {
-		this.pageSize.set(pageSize);
-	}
-
 	public Page.Orientation getOrientation() {
-		return orientation.get();
+		if (pageSize.getWidth() > pageSize.getHeight()) {
+			return Page.Orientation.LANDSCAPE;
+		} else {
+			return Page.Orientation.PORTRAIT;
+		}
 	}
 
-	public SimpleObjectProperty<Page.Orientation> orientationProperty() {
-		return orientation;
+	public PageLayout toRotatedLayout() {
+		return new PageLayout(new Dimension2D(pageSize.getHeight(), pageSize.getWidth()));
 	}
 
-	public void setOrientation(Page.Orientation orientation) {
-		this.orientation.set(orientation);
+	public PageLayout toPortraitLayout() {
+		return new PageLayout(calcPageSize(pageSize, Page.Orientation.PORTRAIT));
+	}
+
+	public PageLayout toLandscapeLayout() {
+		return new PageLayout(calcPageSize(pageSize, Page.Orientation.LANDSCAPE));
 	}
 
 	@Override
@@ -73,12 +63,11 @@ public class PageLayout {
 		if (this == o) return true;
 		if (o == null || getClass() != o.getClass()) return false;
 		PageLayout that = (PageLayout) o;
-		return getPageSize().equals(that.getPageSize()) &&
-				getOrientation().equals(that.getOrientation());
+		return pageSize.equals(that.pageSize);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(getPageSize(), getOrientation());
+		return Objects.hash(pageSize);
 	}
 }

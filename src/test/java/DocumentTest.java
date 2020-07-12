@@ -49,7 +49,7 @@ public class DocumentTest {
 	@Test
 	void testMultiplePagesAdded() throws InterruptedException {
 		Page page1 = new Page(Page.A3);
-		Page page2 = new Page(Page.A4, Page.Orientation.LANDSCAPE);
+		Page page2 = new Page(Page.A4.toLandscapeLayout());
 		Page page3 = new Page(Page.A5);
 
 		Platform.runLater(() -> {

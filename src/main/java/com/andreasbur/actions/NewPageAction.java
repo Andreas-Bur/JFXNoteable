@@ -19,16 +19,16 @@ public class NewPageAction extends Action {
 
 	public NewPageAction(DocumentPane documentPane, Page page, int index) {
 		this.documentPane = documentPane;
-		this.page = page == null ? getPage() : page;
+		this.page = (page == null) ? getPage() : page;
 		this.index = index;
 	}
 
 	private Page getPage() {
 		Page page;
 		if (documentPane.getSelectedPage() != null) {
-			page = new Page(documentPane.getSelectedPage().getPageLayout().getPageSize());
+			page = new Page(documentPane.getSelectedPage().getPageLayout());
 		} else if (!documentPane.getPageList().isEmpty()) {
-			page = new Page(documentPane.getPageList().get(documentPane.getPageList().size() - 1).getPageLayout().getPageSize());
+			page = new Page(documentPane.getPageList().get(documentPane.getPageList().size() - 1).getPageLayout());
 		} else {
 			page = new Page(Page.A4);
 		}
