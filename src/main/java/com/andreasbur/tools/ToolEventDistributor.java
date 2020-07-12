@@ -10,7 +10,7 @@ public class ToolEventDistributor implements EventHandler<MouseEvent> {
 
 	public ToolEventDistributor() {
 
-		toggleGroup = new ToggleGroup();
+		toggleGroup = new ToolToggleGroup();
 
 		toggleGroup.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
 			if (oldValue != null) {
