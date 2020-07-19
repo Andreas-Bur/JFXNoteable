@@ -1,4 +1,4 @@
-package com.andreasbur.gui.components;
+package com.andreasbur.statusbar;
 
 import com.andreasbur.util.ZoomHandler;
 import javafx.geometry.Pos;

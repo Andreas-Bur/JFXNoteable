@@ -1,4 +1,4 @@
-package com.andreasbur.gui.components;
+package com.andreasbur.statusbar;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;

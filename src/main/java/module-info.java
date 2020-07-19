@@ -6,9 +6,10 @@ module com.andreasbur {
     opens com.andreasbur to javafx.fxml;
     exports com.andreasbur;
     exports com.andreasbur.actions;
+    exports com.andreasbur.document;
     exports com.andreasbur.gui;
-    exports com.andreasbur.gui.components;
-    exports com.andreasbur.gui.page;
+    exports com.andreasbur.page;
+    exports com.andreasbur.statusbar;
     exports com.andreasbur.tools;
     exports com.andreasbur.util;
 }

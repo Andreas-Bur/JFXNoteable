@@ -1,8 +1,10 @@
 package com.andreasbur.gui;
 
-import com.andreasbur.gui.page.Page;
-import com.andreasbur.gui.page.PageLayout;
-import com.andreasbur.gui.page.PagePreview;
+import com.andreasbur.document.DocumentController;
+import com.andreasbur.document.DocumentPane;
+import com.andreasbur.page.PagePane;
+import com.andreasbur.page.PageLayout;
+import com.andreasbur.page.PagePreview;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
@@ -19,15 +21,19 @@ import java.util.stream.Collectors;
 
 public class DocumentSideBar extends ScrollPane {
 
-	private final ObservableList<Page> pageList;
+	private final ObservableList<PagePane> pagePaneList;
 	private final ObservableList<PagePreview> pagePreviewList;
 	private final DoubleProperty maxPageWidth;
 	private final VBox pagePreviewPane;
 
-	public DocumentSideBar(DocumentPane documentPane) {
+	private DocumentController.PageSelectionListener pageSelectionListener = null;
+
+	private static final int PADDING = 25;
+
+	public DocumentSideBar(ObservableList<PagePane> pagePaneList) {
 		super();
 
-		this.pageList = documentPane.getPageList();
+		this.pagePaneList = pagePaneList;
 		pagePreviewList = FXCollections.observableArrayList();
 		maxPageWidth = new SimpleDoubleProperty();
 
@@ -39,51 +45,46 @@ public class DocumentSideBar extends ScrollPane {
 
 		pagePreviewPane = new VBox();
 		pagePreviewPane.setAlignment(Pos.TOP_CENTER);
-		pagePreviewPane.setSpacing(25);
-		pagePreviewPane.setPadding(new Insets(25));
+		pagePreviewPane.setSpacing(PADDING);
+		pagePreviewPane.setPadding(new Insets(PADDING));
 		Bindings.bindContent(pagePreviewPane.getChildren(), pagePreviewList);
 
 		setContent(pagePreviewPane);
 
 		ChangeListener<? super PageLayout> maxPageWidthListener = (observable, oldValue, newValue) -> updateMaxPageWidth();
 
-		pageList.addListener((ListChangeListener<? super Page>) c -> {
+		pagePaneList.addListener((ListChangeListener<? super PagePane>) c -> {
 			updateMaxPageWidth();
 
 			while (c.next()) {
 				if (c.wasAdded()) {
-					for (Page page : c.getAddedSubList()) {
-						page.getPagePreview().getImageView().fitWidthProperty().bind(widthProperty()
-								.multiply(Bindings.createDoubleBinding(() -> page.getPageLayout().getPageSize().getWidth(), page.pageLayoutProperty()))
-								.divide(maxPageWidth)
-								.subtract(50));
-						page.pageLayoutProperty().addListener(maxPageWidthListener);
+					for (PagePane pagePane : c.getAddedSubList()) {
+						pagePane.getPagePreview().getImageView().fitWidthProperty().bind(widthProperty().subtract(2 * PADDING)
+								.multiply(Bindings.createDoubleBinding(() -> pagePane.getPageModel().getPageLayout().getPageSize().getWidth(), pagePane.getPageModel().pageLayoutProperty()))
+								.divide(maxPageWidth));
+						pagePane.getPageModel().pageLayoutProperty().addListener(maxPageWidthListener);
 					}
 				}
 			}
 
-			pagePreviewList.setAll(pageList.stream().map(Page::getPagePreview).collect(Collectors.toList()));
-			pagePreviewList.forEach(pagePreview -> pagePreview.setOnMouseClicked(event -> documentPane.setSelectedPage(pagePreview.getPage())));
+			pagePreviewList.setAll(pagePaneList.stream().map(PagePane::getPagePreview).collect(Collectors.toList()));
+			pagePreviewList.forEach(pagePreview -> pagePreview.setOnMouseClicked(event -> pageSelectionListener.changed(pagePreviewList.indexOf(pagePreview))));
 		});
 	}
 
 	private void updateMaxPageWidth() {
-		maxPageWidth.set(pageList.stream().mapToDouble(value -> value.getPageLayout().getPageSize().getWidth()).max().orElse(100));
+		maxPageWidth.set(pagePaneList.stream().mapToDouble(value -> value.getPageModel().getPageLayout().getPageSize().getWidth()).max().orElse(100));
 	}
 
 	public ObservableList<PagePreview> getPagePreviewList() {
 		return pagePreviewList;
 	}
 
-	public double getMaxPageWidth() {
-		return maxPageWidth.get();
-	}
-
-	public DoubleProperty maxPageWidthProperty() {
-		return maxPageWidth;
-	}
-
 	public VBox getPagePreviewPane() {
 		return pagePreviewPane;
+	}
+
+	public void setPageSelectionListener(DocumentController.PageSelectionListener pageSelectionListener){
+		this.pageSelectionListener = pageSelectionListener;
 	}
 }

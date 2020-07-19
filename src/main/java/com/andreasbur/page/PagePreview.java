@@ -1,4 +1,4 @@
-package com.andreasbur.gui.page;
+package com.andreasbur.page;
 
 import javafx.geometry.Pos;
 import javafx.scene.effect.DropShadow;
@@ -8,26 +8,26 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 
-public class PagePreview extends VBox {
+public class  PagePreview extends VBox {
 
 	private static final DropShadow pagePreviewShadow = new DropShadow(5, 2, 2, Color.BLACK);
 	private final ImageView imageView;
 	private final StackPane imageViewPane;
-	private final Page page;
+	private final PagePane pagePane;
 
-	public PagePreview(Page page) {
+	public PagePreview(PagePane pagePane) {
 
-		this.page = page;
+		this.pagePane = pagePane;
 
 		imageView = new ImageView();
 		imageView.setPreserveRatio(true);
 		imageView.setEffect(pagePreviewShadow);
-		imageView.imageProperty().bind(page.previewImageProperty());
+		imageView.imageProperty().bind(pagePane.previewImageProperty());
 
 		imageViewPane = new StackPane(imageView);
 
 		Text pageIndexText = new Text();
-		pageIndexText.textProperty().bind(page.pageIndexProperty().asString());
+		pageIndexText.textProperty().bind(pagePane.getPageModel().pageNumberProperty().asString());
 
 		setAlignment(Pos.TOP_CENTER);
 		setSpacing(10);
@@ -37,8 +37,8 @@ public class PagePreview extends VBox {
 
 	}
 
-	public Page getPage() {
-		return page;
+	public PagePane getPagePane() {
+		return pagePane;
 	}
 
 	public ImageView getImageView() {

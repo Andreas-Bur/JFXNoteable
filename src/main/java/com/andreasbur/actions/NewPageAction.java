@@ -1,48 +1,43 @@
 package com.andreasbur.actions;
 
-import com.andreasbur.gui.DocumentPane;
-import com.andreasbur.gui.page.Page;
+import com.andreasbur.document.DocumentController;
+import com.andreasbur.page.PageModel;
 
 public class NewPageAction extends Action {
 
-	private final DocumentPane documentPane;
-	private final Page page;
+	private final DocumentController documentController;
+	private final PageModel pageModel;
 	private final int index;
+	private int previouslySelectedIndex;
 
-	public NewPageAction(DocumentPane documentPane) {
-		this(documentPane, null);
+	public NewPageAction(DocumentController documentController) {
+		this(documentController, null);
 	}
 
-	public NewPageAction(DocumentPane documentPane, Page page) {
-		this(documentPane, page, documentPane.getSelectedPage() != null ? documentPane.getSelectedPage().getPageIndex() : documentPane.getPageList().size());
+	public NewPageAction(DocumentController documentController, PageModel pageModel) {
+		this(documentController, pageModel, documentController.getDocumentModel().isPageSelected().get() ?
+				documentController.getDocumentModel().getSelectedPageIndex() + 1 :
+				documentController.getDocumentModel().getPageModels().size());
 	}
 
-	public NewPageAction(DocumentPane documentPane, Page page, int index) {
-		this.documentPane = documentPane;
-		this.page = (page == null) ? getPage() : page;
+	public NewPageAction(DocumentController documentController, PageModel pageModel, int index) {
+		this.documentController = documentController;
+		this.pageModel = pageModel;
 		this.index = index;
-	}
-
-	private Page getPage() {
-		Page page;
-		if (documentPane.getSelectedPage() != null) {
-			page = new Page(documentPane.getSelectedPage().getPageLayout());
-		} else if (!documentPane.getPageList().isEmpty()) {
-			page = new Page(documentPane.getPageList().get(documentPane.getPageList().size() - 1).getPageLayout());
-		} else {
-			page = new Page(Page.A4);
-		}
-
-		return page;
 	}
 
 	@Override
 	void execute() {
-		documentPane.getPageList().add(index, page);
+
+		previouslySelectedIndex = documentController.getDocumentModel().getSelectedPageIndex();
+
+		documentController.addPage(index, pageModel);
+		documentController.setSelectedPage(index);
 	}
 
 	@Override
 	void undo() {
-		documentPane.getPageList().remove(page);
+		documentController.removePage(index);
+		documentController.setSelectedPage(previouslySelectedIndex);
 	}
 }

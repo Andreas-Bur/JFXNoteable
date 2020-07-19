@@ -1,5 +1,7 @@
+import com.andreasbur.page.PageModel;
 import com.andreasbur.gui.ParentPane;
-import com.andreasbur.gui.page.Page;
+import com.andreasbur.page.PagePane;
+import com.andreasbur.page.PageLayout;
 import javafx.application.Platform;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -22,8 +24,8 @@ public class DocumentTest {
 
 	@Test
 	void testDocumentInit() {
-		assert parentPane.getDocumentPane().getPageList().isEmpty();
-		assert parentPane.getDocumentPane().getSelectedPage() == null;
+		assert parentPane.getDocumentPane().getPagePaneList().isEmpty();
+		assert parentPane.getDocumentPane().getDocumentModel().getSelectedPageIndex() == -1;
 
 		assert parentPane.getDocumentSideBar().getPagePreviewList().isEmpty();
 		assert parentPane.getDocumentSideBar().getPagePreviewPane().getChildren().isEmpty();
@@ -31,16 +33,16 @@ public class DocumentTest {
 
 	@Test
 	void testFirstPageAdded() throws InterruptedException {
-		Page page1 = new Page(Page.A4);
+		PagePane pagePane1 = new PagePane(new PageModel(PageLayout.A4));
 		Platform.runLater(() -> {
-			parentPane.getDocumentPane().getPageList().add(page1);
+			parentPane.getDocumentPane().getPagePaneList().add(pagePane1);
 			countDownLatch.countDown();
 		});
 
 		countDownLatch.await();
 
-		assert parentPane.getDocumentPane().getPageList().size() == 1;
-		assert parentPane.getDocumentPane().getPageList().get(0) == page1;
+		assert parentPane.getDocumentPane().getPagePaneList().size() == 1;
+		assert parentPane.getDocumentPane().getPagePaneList().get(0) == pagePane1;
 		assert parentPane.getDocumentSideBar().getPagePreviewList().size() == 1;
 		assert parentPane.getDocumentSideBar().getPagePreviewPane().getChildren().size() == 1;
 
@@ -48,21 +50,21 @@ public class DocumentTest {
 
 	@Test
 	void testMultiplePagesAdded() throws InterruptedException {
-		Page page1 = new Page(Page.A3);
-		Page page2 = new Page(Page.A4.toLandscapeLayout());
-		Page page3 = new Page(Page.A5);
+		PagePane pagePane1 = new PagePane(new PageModel(PageLayout.A3));
+		PagePane pagePane2 = new PagePane(new PageModel(PageLayout.A4.toLandscape()));
+		PagePane pagePane3 = new PagePane(new PageModel(PageLayout.A5));
 
 		Platform.runLater(() -> {
-			parentPane.getDocumentPane().getPageList().addAll(page1, page2, page3);
+			parentPane.getDocumentPane().getPagePaneList().addAll(pagePane1, pagePane2, pagePane3);
 			countDownLatch.countDown();
 		});
 
 		countDownLatch.await();
 
-		assert parentPane.getDocumentPane().getPageList().size() == 3;
-		assert parentPane.getDocumentPane().getPageList().get(0) == page1;
-		assert parentPane.getDocumentPane().getPageList().get(1) == page2;
-		assert parentPane.getDocumentPane().getPageList().get(2) == page3;
+		assert parentPane.getDocumentPane().getPagePaneList().size() == 3;
+		assert parentPane.getDocumentPane().getPagePaneList().get(0) == pagePane1;
+		assert parentPane.getDocumentPane().getPagePaneList().get(1) == pagePane2;
+		assert parentPane.getDocumentPane().getPagePaneList().get(2) == pagePane3;
 		assert parentPane.getDocumentSideBar().getPagePreviewList().size() == 3;
 		assert parentPane.getDocumentSideBar().getPagePreviewPane().getChildren().size() == 3;
 

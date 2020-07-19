@@ -3,6 +3,8 @@ package com.andreasbur.gui;
 import com.andreasbur.actions.ActionHandler;
 import com.andreasbur.actions.NewPageAction;
 import com.andreasbur.actions.RotatePageAction;
+import com.andreasbur.document.DocumentController;
+import com.andreasbur.document.DocumentModel;
 import com.andreasbur.tools.ToolFactory;
 import javafx.scene.control.Button;
 import javafx.scene.control.ToggleButton;
@@ -11,14 +13,14 @@ import javafx.scene.layout.VBox;
 
 public class ToolbarPane extends VBox {
 
-	private final DocumentPane documentPane;
+	private final DocumentController documentController;
 	private final ActionHandler actionHandler;
 
 	private final ToolFactory toolFactory;
 
-	public ToolbarPane(DocumentPane documentPane, ActionHandler actionHandler, ToolFactory toolFactory) {
+	public ToolbarPane(DocumentController documentController, ActionHandler actionHandler, ToolFactory toolFactory) {
 
-		this.documentPane = documentPane;
+		this.documentController = documentController;
 		this.actionHandler = actionHandler;
 		this.toolFactory = toolFactory;
 
@@ -35,14 +37,14 @@ public class ToolbarPane extends VBox {
 
 		Button addPageButton = new Button("add page");
 		addPageButton.setOnAction(event -> {
-			NewPageAction newPageAction = new NewPageAction(documentPane);
+			NewPageAction newPageAction = new NewPageAction(documentController);
 			actionHandler.execute(newPageAction);
 		});
 
 		Button rotatePageButton = new Button("rotate Page");
-		rotatePageButton.disableProperty().bind(documentPane.selectedPageProperty().isNull());
+		rotatePageButton.disableProperty().bind(documentController.getDocumentModel().isPageSelected().not());
 		rotatePageButton.setOnAction(event -> {
-			RotatePageAction rotatePageAction = new RotatePageAction(documentPane);
+			RotatePageAction rotatePageAction = new RotatePageAction(documentController);
 			actionHandler.execute(rotatePageAction);
 		});
 

@@ -1,7 +1,7 @@
 package com.andreasbur.gui;
 
-import com.andreasbur.gui.components.MemoryProgressPane;
-import com.andreasbur.gui.components.ScaleSlider;
+import com.andreasbur.statusbar.MemoryProgressPane;
+import com.andreasbur.statusbar.ScaleSlider;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
