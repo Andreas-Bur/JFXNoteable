@@ -24,6 +24,7 @@ public class ActionHandler {
 	public void execute(Action action) {
 		action.execute();
 		undoActionStack.push(action);
+		redoActionStack.clear();
 		updateStates();
 	}
 
@@ -45,7 +46,7 @@ public class ActionHandler {
 		updateStates();
 	}
 
-	public boolean isCanUndo() {
+	public boolean canUndo() {
 		return canUndo.get();
 	}
 
@@ -53,7 +54,7 @@ public class ActionHandler {
 		return canUndo;
 	}
 
-	public boolean isCanRedo() {
+	public boolean canRedo() {
 		return canRedo.get();
 	}
 

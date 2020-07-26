@@ -1,32 +1,29 @@
 package com.andreasbur.actions;
 
 import com.andreasbur.document.DocumentController;
-import com.andreasbur.document.DocumentModel;
-import com.andreasbur.page.PageModel;
 
 public class RotatePageAction extends Action {
 
-	private final PageModel pageModel;
+	private final DocumentController documentController;
+	private final int index;
 
 	public RotatePageAction(DocumentController documentController) {
-		this(documentController.getDocumentModel().getSelectedPageModel());
-	}
 
-	public RotatePageAction(PageModel pageModel) {
-		if(pageModel == null){
-			throw new IllegalArgumentException("pageModel must not be null.");
+		if (documentController.getDocumentModel().isPageSelected().not().get()) {
+			throw new IllegalStateException("No page to rotate is selected!");
 		}
 
-		this.pageModel = pageModel;
+		this.documentController = documentController;
+		this.index = documentController.getDocumentModel().getSelectedPageIndex();
 	}
 
 	@Override
-	void execute() {
-		pageModel.setPageLayout(pageModel.getPageLayout().toRotatedLayout());
+	protected void execute() {
+		documentController.rotatePage(index);
 	}
 
 	@Override
-	void undo() {
-		pageModel.setPageLayout(pageModel.getPageLayout().toRotatedLayout());
+	protected void undo() {
+		documentController.rotatePage(index);
 	}
 }

@@ -2,6 +2,7 @@ package com.andreasbur.gui;
 
 import com.andreasbur.document.DocumentController;
 import com.andreasbur.document.DocumentPane;
+import com.andreasbur.document.PageSelector;
 import com.andreasbur.page.PagePane;
 import com.andreasbur.page.PageLayout;
 import com.andreasbur.page.PagePreview;
@@ -19,7 +20,7 @@ import javafx.scene.layout.VBox;
 
 import java.util.stream.Collectors;
 
-public class DocumentSideBar extends ScrollPane {
+public class DocumentSideBar extends ScrollPane implements PageSelector {
 
 	private final ObservableList<PagePane> pagePaneList;
 	private final ObservableList<PagePreview> pagePreviewList;

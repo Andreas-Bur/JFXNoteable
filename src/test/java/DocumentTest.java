@@ -1,3 +1,7 @@
+import com.andreasbur.document.DocumentController;
+import com.andreasbur.document.DocumentModel;
+import com.andreasbur.document.DocumentPane;
+import com.andreasbur.gui.DocumentSideBar;
 import com.andreasbur.page.PageModel;
 import com.andreasbur.gui.ParentPane;
 import com.andreasbur.page.PagePane;
@@ -8,65 +12,62 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.testfx.framework.junit5.ApplicationExtension;
 
+import javax.print.Doc;
 import java.util.concurrent.CountDownLatch;
 
 @ExtendWith(ApplicationExtension.class)
 public class DocumentTest {
 
-	ParentPane parentPane;
-	CountDownLatch countDownLatch;
+	private DocumentModel documentModel;
+	private DocumentPane documentPane;
+	private DocumentController documentController;
 
 	@BeforeEach
 	void start() {
-		parentPane = new ParentPane();
-		countDownLatch = new CountDownLatch(1);
+		documentModel = new DocumentModel();
+		documentPane = new DocumentPane(documentModel);
+		documentController = new DocumentController(documentModel, documentPane);
 	}
 
 	@Test
 	void testDocumentInit() {
-		assert parentPane.getDocumentPane().getPagePaneList().isEmpty();
-		assert parentPane.getDocumentPane().getDocumentModel().getSelectedPageIndex() == -1;
 
-		assert parentPane.getDocumentSideBar().getPagePreviewList().isEmpty();
-		assert parentPane.getDocumentSideBar().getPagePreviewPane().getChildren().isEmpty();
+		assert documentModel.getPageModels().isEmpty();
+		assert documentPane.getPagePaneList().isEmpty();
+
+		assert documentModel.getSelectedPageModel() == null;
+		assert documentModel.getSelectedPageIndex() == -1;
 	}
 
 	@Test
-	void testFirstPageAdded() throws InterruptedException {
-		PagePane pagePane1 = new PagePane(new PageModel(PageLayout.A4));
-		Platform.runLater(() -> {
-			parentPane.getDocumentPane().getPagePaneList().add(pagePane1);
-			countDownLatch.countDown();
-		});
+	void testFirstPageAdded() {
 
-		countDownLatch.await();
+		PageModel pageModel = new PageModel(PageLayout.A4);
+		documentController.addPage(0, pageModel);
 
-		assert parentPane.getDocumentPane().getPagePaneList().size() == 1;
-		assert parentPane.getDocumentPane().getPagePaneList().get(0) == pagePane1;
-		assert parentPane.getDocumentSideBar().getPagePreviewList().size() == 1;
-		assert parentPane.getDocumentSideBar().getPagePreviewPane().getChildren().size() == 1;
+		assert documentModel.getPageModels().size() == 1;
+		assert documentModel.getPageModels().get(0) == pageModel;
+
+		assert documentPane.getPagePaneList().size() == 1;
+		assert documentPane.getPagePaneList().get(0).getPageModel() == documentModel.getPageModels().get(0);
 
 	}
 
 	@Test
-	void testMultiplePagesAdded() throws InterruptedException {
-		PagePane pagePane1 = new PagePane(new PageModel(PageLayout.A3));
-		PagePane pagePane2 = new PagePane(new PageModel(PageLayout.A4.toLandscape()));
-		PagePane pagePane3 = new PagePane(new PageModel(PageLayout.A5));
+	void testOrderOfMultiplePagesAdded() {
 
-		Platform.runLater(() -> {
-			parentPane.getDocumentPane().getPagePaneList().addAll(pagePane1, pagePane2, pagePane3);
-			countDownLatch.countDown();
-		});
+		PageModel pageModel1 = new PageModel(PageLayout.A5);
+		PageModel pageModel2 = new PageModel(PageLayout.A4.toLandscape());
+		PageModel pageModel3 = new PageModel(PageLayout.A3);
 
-		countDownLatch.await();
+		documentController.addPage(0, pageModel1);
+		documentController.addPage(1, pageModel3);
+		documentController.addPage(1, pageModel2);
 
-		assert parentPane.getDocumentPane().getPagePaneList().size() == 3;
-		assert parentPane.getDocumentPane().getPagePaneList().get(0) == pagePane1;
-		assert parentPane.getDocumentPane().getPagePaneList().get(1) == pagePane2;
-		assert parentPane.getDocumentPane().getPagePaneList().get(2) == pagePane3;
-		assert parentPane.getDocumentSideBar().getPagePreviewList().size() == 3;
-		assert parentPane.getDocumentSideBar().getPagePreviewPane().getChildren().size() == 3;
+		assert documentModel.getPageModels().size() == 3;
+		assert documentModel.getPageModels().get(0) == pageModel1;
+		assert documentModel.getPageModels().get(1) == pageModel2;
+		assert documentModel.getPageModels().get(2) == pageModel3;
 
 	}
 

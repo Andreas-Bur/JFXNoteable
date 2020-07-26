@@ -9,7 +9,6 @@ public class PageModel {
 	private final ObjectProperty<PageLayout> pageLayout;
 	private final IntegerProperty pageNumber;
 
-
 	public PageModel(PageLayout pageLayout) {
 		this.pageLayout = new SimpleObjectProperty<>(pageLayout);
 		this.pageNumber = new SimpleIntegerProperty(-1);

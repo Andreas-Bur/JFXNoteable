@@ -2,8 +2,8 @@ package com.andreasbur.actions;
 
 public abstract class Action {
 
-	abstract void execute();
+	protected abstract void execute();
 
-	abstract void undo();
+	protected abstract void undo();
 
 }

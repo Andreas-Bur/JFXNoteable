@@ -15,28 +15,30 @@ public class NewPageAction extends Action {
 	}
 
 	public NewPageAction(DocumentController documentController, PageModel pageModel) {
-		this(documentController, pageModel, documentController.getDocumentModel().isPageSelected().get() ?
-				documentController.getDocumentModel().getSelectedPageIndex() + 1 :
-				documentController.getDocumentModel().getPageModels().size());
+		this(documentController, pageModel, -1);
 	}
 
 	public NewPageAction(DocumentController documentController, PageModel pageModel, int index) {
 		this.documentController = documentController;
 		this.pageModel = pageModel;
-		this.index = index;
+
+		if (index >= 0) {
+			this.index = index;
+		} else {
+			this.index = documentController.getActivePageIndex() + 1;
+		}
 	}
 
 	@Override
-	void execute() {
+	protected void execute() {
 
 		previouslySelectedIndex = documentController.getDocumentModel().getSelectedPageIndex();
 
-		documentController.addPage(index, pageModel);
-		documentController.setSelectedPage(index);
+		documentController.addPage(index, pageModel, true);
 	}
 
 	@Override
-	void undo() {
+	protected void undo() {
 		documentController.removePage(index);
 		documentController.setSelectedPage(previouslySelectedIndex);
 	}

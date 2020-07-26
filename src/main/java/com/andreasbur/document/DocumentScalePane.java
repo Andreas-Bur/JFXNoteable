@@ -1,6 +1,5 @@
 package com.andreasbur.document;
 
-import com.andreasbur.document.DocumentPane;
 import com.andreasbur.util.ScrollHandler;
 import com.andreasbur.util.ZoomHandler;
 import javafx.geometry.Bounds;
@@ -42,8 +41,11 @@ public class DocumentScalePane extends ScrollPane {
 			}
 		});
 
-		documentPane.getDocumentModel().selectedPageIndexProperty().addListener((observable, oldValue, newValue) ->
-				scrollToNode(documentPane.getPagePaneList().get(newValue.intValue())));
+		documentPane.getDocumentModel().selectedPageIndexProperty().addListener((observable, oldValue, newValue) -> {
+			if(newValue.intValue() >= 0){
+				scrollToNode(documentPane.getPagePaneList().get(newValue.intValue()));
+			}
+		});
 
 		AtomicBoolean keepOldVvalue = new AtomicBoolean(false);
 

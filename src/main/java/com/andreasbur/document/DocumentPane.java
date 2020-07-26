@@ -18,12 +18,14 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
-public class DocumentPane extends StackPane {
+public class DocumentPane extends StackPane implements PageSelector {
 
 	private final VBox pageBox;
 
 	private final ObservableList<PagePane> pagePaneList = FXCollections.observableArrayList();
 	private final DocumentModel documentModel;
+
+	private PagePane selectedPagePane = null;
 
 	private DocumentController.PageSelectionListener pageSelectionListener;
 	private static final Border SELECTED_BORDER = new Border(new BorderStroke(Color.RED, BorderStrokeStyle.SOLID, new CornerRadii(2), new BorderWidths(2)));
@@ -53,20 +55,20 @@ public class DocumentPane extends StackPane {
 						pagePane.addEventFilter(MouseEvent.MOUSE_PRESSED, event -> pageSelectionListener.changed(pagePaneList.indexOf(pagePane)));
 					}
 				}
-				if (documentModel.isPageSelected().get() && c.getRemoved().contains(pagePaneList.get(documentModel.getSelectedPageIndex()))) {
-					pageSelectionListener.changed(-1);
-				}
 			}
 		});
 
 		documentModel.selectedPageIndexProperty().addListener((observable, oldValue, newValue) -> {
-			if (oldValue.intValue() >= 0) {
-				pagePaneList.get(oldValue.intValue()).setBorder(Border.EMPTY);
-				pagePaneList.get(oldValue.intValue()).getPagePreview().getImageViewPane().setBorder(Border.EMPTY);
+			if (selectedPagePane != null) {
+				selectedPagePane.setBorder(Border.EMPTY);
+				selectedPagePane.getPagePreview().getImageViewPane().setBorder(Border.EMPTY);
 			}
 			if (newValue.intValue() >= 0) {
-				pagePaneList.get(newValue.intValue()).setBorder(SELECTED_BORDER);
-				pagePaneList.get(newValue.intValue()).getPagePreview().getImageViewPane().setBorder(SELECTED_BORDER);
+				selectedPagePane = pagePaneList.get(newValue.intValue());
+				selectedPagePane.setBorder(SELECTED_BORDER);
+				selectedPagePane.getPagePreview().getImageViewPane().setBorder(SELECTED_BORDER);
+			} else {
+				selectedPagePane = null;
 			}
 		});
 	}
@@ -91,7 +93,7 @@ public class DocumentPane extends StackPane {
 		return pagePaneList;
 	}
 
-	public void setPageSelectionListener(DocumentController.PageSelectionListener pageSelectionListener){
+	public void setPageSelectionListener(DocumentController.PageSelectionListener pageSelectionListener) {
 		this.pageSelectionListener = pageSelectionListener;
 	}
 

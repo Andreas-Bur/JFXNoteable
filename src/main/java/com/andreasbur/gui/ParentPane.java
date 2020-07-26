@@ -47,13 +47,13 @@ public class ParentPane extends BorderPane {
 
 		documentPane = new DocumentPane(documentModel);
 		documentPane.addEventHandler(MouseEvent.ANY, toolEventDistributor);
-		documentSideBar = new DocumentSideBar(documentPane.getPagePaneList());
 
-		documentController = new DocumentController(documentModel, documentPane, documentSideBar);
+		documentController = new DocumentController(documentModel, documentPane);
 
 		menuBar = new MyMenuBar(actionHandler);
 		toolbarPane = new ToolbarPane(documentController, actionHandler, toolFactory);
 		documentScalePane = new DocumentScalePane(documentPane, zoomHandler, scrollHandler);
+		documentSideBar = new DocumentSideBar(documentPane.getPagePaneList());
 		statusBar = new StatusBar(this);
 
 		SplitPane middleSplitPane = new SplitPane();
@@ -66,6 +66,9 @@ public class ParentPane extends BorderPane {
 		setTop(topPane);
 		setBottom(statusBar);
 		setCenter(middleSplitPane);
+
+		documentController.addPageSelector(documentPane);
+		documentController.addPageSelector(documentSideBar);
 
 	}
 
