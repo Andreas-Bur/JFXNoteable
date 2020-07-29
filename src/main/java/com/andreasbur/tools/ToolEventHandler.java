@@ -6,7 +6,7 @@ public interface ToolEventHandler {
 
 	void handleEvent(MouseEvent event);
 
-	void resetState();
+	void deselect();
 
 	void select();
 }

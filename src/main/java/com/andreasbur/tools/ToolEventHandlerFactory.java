@@ -15,7 +15,7 @@ public class ToolEventHandlerFactory {
 	}
 
 	public ToolEventHandler createPenToolHandler() {
-		return new PenToolEventHandler();
+		return new PenToolEventHandler(parentPane.getActionHandler());
 	}
 
 	public ToolEventHandler createEraserToolHandler() {

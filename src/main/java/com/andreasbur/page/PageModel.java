@@ -4,14 +4,19 @@ import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.scene.shape.Shape;
 
 public class PageModel {
 	private final ObjectProperty<PageLayout> pageLayout;
 	private final IntegerProperty pageNumber;
+	private final ObservableList<Shape> shapes;
 
 	public PageModel(PageLayout pageLayout) {
 		this.pageLayout = new SimpleObjectProperty<>(pageLayout);
 		this.pageNumber = new SimpleIntegerProperty(-1);
+		this.shapes = FXCollections.observableArrayList();
 	}
 
 	public PageLayout getPageLayout() {
@@ -36,5 +41,9 @@ public class PageModel {
 
 	public void setPageNumber(int pageNumber) {
 		this.pageNumber.set(pageNumber);
+	}
+
+	public ObservableList<Shape> getShapes() {
+		return shapes;
 	}
 }

@@ -2,6 +2,7 @@ package com.andreasbur.document;
 
 import com.andreasbur.page.PageModel;
 import com.andreasbur.page.PagePane;
+import com.andreasbur.tools.ToolEventDistributor;
 import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
@@ -14,6 +15,7 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
@@ -28,6 +30,7 @@ public class DocumentPane extends StackPane implements PageSelector {
 	private PagePane selectedPagePane = null;
 
 	private DocumentController.PageSelectionListener pageSelectionListener;
+	private ToolEventDistributor toolEventDistributor;
 	private static final Border SELECTED_BORDER = new Border(new BorderStroke(Color.RED, BorderStrokeStyle.SOLID, new CornerRadii(2), new BorderWidths(2)));
 
 	public DocumentPane(DocumentModel documentModel) {
@@ -97,6 +100,11 @@ public class DocumentPane extends StackPane implements PageSelector {
 		this.pageSelectionListener = pageSelectionListener;
 	}
 
+	public void setToolEventDistributor(ToolEventDistributor toolEventDistributor) {
+		this.toolEventDistributor = toolEventDistributor;
+		pagePaneList.forEach(pagePane -> pagePane.getContentPane().addEventHandler(MouseEvent.ANY, toolEventDistributor));
+	}
+
 	private ListChangeListener<? super PageModel> pageModelsListener = c -> {
 		while (c.next()) {
 			if (c.wasPermutated()) {
@@ -113,7 +121,12 @@ public class DocumentPane extends StackPane implements PageSelector {
 					c.getRemoved().forEach(pageModel -> pagePaneList.removeIf(page -> page.getPageModel() == pageModel));
 				}
 				if (c.wasAdded()) {
-					pagePaneList.addAll(c.getFrom(), c.getAddedSubList().stream().map(this::createPage).collect(Collectors.toList()));
+					List<PagePane> newPagePanes = c.getAddedSubList().stream().map(this::createPage).collect(Collectors.toList());
+					pagePaneList.addAll(c.getFrom(), newPagePanes);
+
+					if (toolEventDistributor != null) {
+						newPagePanes.forEach(pagePane -> pagePane.addEventHandler(MouseEvent.ANY, toolEventDistributor));
+					}
 				}
 			}
 		}

@@ -7,7 +7,6 @@ public class EraserToolEventHandler implements ToolEventHandler {
 	private boolean isPressed;
 
 	public EraserToolEventHandler() {
-		resetState();
 	}
 
 	@Override
@@ -15,13 +14,13 @@ public class EraserToolEventHandler implements ToolEventHandler {
 		if (event.getEventType().equals(MouseEvent.MOUSE_PRESSED)) {
 			isPressed = true;
 		} else if (event.getEventType().equals(MouseEvent.MOUSE_RELEASED)) {
-			resetState();
+			isPressed = false;
 		}
 	}
 
 	@Override
-	public void resetState() {
-		isPressed = false;
+	public void deselect() {
+
 	}
 
 	@Override

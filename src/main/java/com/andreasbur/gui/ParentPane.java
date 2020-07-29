@@ -9,9 +9,6 @@ import com.andreasbur.tools.ToolEventDistributor;
 import com.andreasbur.tools.ToolFactory;
 import com.andreasbur.util.ScrollHandler;
 import com.andreasbur.util.ZoomHandler;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.value.ObservableValue;
 import javafx.scene.control.SplitPane;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
@@ -46,7 +43,7 @@ public class ParentPane extends BorderPane {
 		documentModel = new DocumentModel();
 
 		documentPane = new DocumentPane(documentModel);
-		documentPane.addEventHandler(MouseEvent.ANY, toolEventDistributor);
+		documentPane.setToolEventDistributor(toolEventDistributor);
 
 		documentController = new DocumentController(documentModel, documentPane);
 
