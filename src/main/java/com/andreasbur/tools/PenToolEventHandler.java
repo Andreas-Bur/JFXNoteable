@@ -18,14 +18,38 @@ public class PenToolEventHandler implements ToolEventHandler {
 	}
 
 	@Override
-	public void handleEvent(MouseEvent event) {
+	public void handlePageEvent(MouseEvent event) {
 		if (event.getEventType().equals(MouseEvent.MOUSE_PRESSED)) {
-			pressedPagePane = (PagePane) event.getSource();
-			polyline = new Polyline();
-			pressedPagePane.setCurrentDrawnShape(polyline);
+			initPolyline((PagePane) event.getSource());
 			addPointToPolyline(event.getX(), event.getY());
-			System.out.println(event.getX() + " : " + event.getY());
 		} else if (event.getEventType().equals(MouseEvent.MOUSE_RELEASED)) {
+			finishPolyline();
+		} else if (event.getEventType().equals(MouseEvent.MOUSE_DRAGGED) && event.getSource() == pressedPagePane) {
+			addPointToPolyline(event.getX(), event.getY());
+		}
+	}
+
+	@Override
+	public void handleDocumentEvent(MouseEvent event) {
+		if (event.getEventType().equals(MouseEvent.MOUSE_RELEASED)) {
+			finishPolyline();
+		}
+	}
+
+	private void initPolyline(PagePane pagePane) {
+		pressedPagePane = pagePane;
+		polyline = new Polyline();
+		pressedPagePane.setCurrentDrawnShape(polyline);
+	}
+
+	private void addPointToPolyline(double x, double y) {
+		if (polyline != null) {
+			polyline.getPoints().addAll(x, y);
+		}
+	}
+
+	private void finishPolyline() {
+		if (polyline != null) {
 			pressedPagePane.setCurrentDrawnShape(null);
 
 			AddShapeAction addShapeAction = new AddShapeAction(pressedPagePane.getPageModel(), polyline);
@@ -33,14 +57,7 @@ public class PenToolEventHandler implements ToolEventHandler {
 
 			polyline = null;
 			pressedPagePane = null;
-		} else if (event.getEventType().equals(MouseEvent.MOUSE_DRAGGED) && event.getSource() == pressedPagePane) {
-			addPointToPolyline(event.getX(), event.getY());
-			System.out.println(event.getX() + " : " + event.getY());
 		}
-	}
-
-	private void addPointToPolyline(double x, double y) {
-		polyline.getPoints().addAll(x, y);
 	}
 
 	@Override

@@ -20,7 +20,11 @@ public class NewPageAction extends Action {
 
 	public NewPageAction(DocumentController documentController, PageModel pageModel, int index) {
 		this.documentController = documentController;
-		this.pageModel = pageModel;
+		if (pageModel != null) {
+			this.pageModel = pageModel;
+		} else {
+			this.pageModel = documentController.createPageModel();
+		}
 
 		if (index >= 0) {
 			this.index = index;
@@ -31,9 +35,7 @@ public class NewPageAction extends Action {
 
 	@Override
 	protected void execute() {
-
 		previouslySelectedIndex = documentController.getDocumentModel().getSelectedPageIndex();
-
 		documentController.addPage(index, pageModel, true);
 	}
 

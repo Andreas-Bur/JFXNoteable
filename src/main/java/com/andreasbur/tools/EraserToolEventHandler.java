@@ -10,12 +10,17 @@ public class EraserToolEventHandler implements ToolEventHandler {
 	}
 
 	@Override
-	public void handleEvent(MouseEvent event) {
+	public void handlePageEvent(MouseEvent event) {
 		if (event.getEventType().equals(MouseEvent.MOUSE_PRESSED)) {
 			isPressed = true;
 		} else if (event.getEventType().equals(MouseEvent.MOUSE_RELEASED)) {
 			isPressed = false;
 		}
+	}
+
+	@Override
+	public void handleDocumentEvent(MouseEvent event) {
+
 	}
 
 	@Override

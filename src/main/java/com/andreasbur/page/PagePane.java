@@ -5,6 +5,9 @@ import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableValue;
+import javafx.beans.value.WeakChangeListener;
+import javafx.collections.ListChangeListener;
+import javafx.collections.WeakListChangeListener;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
@@ -26,6 +29,7 @@ public class PagePane extends FlowPane {
 	private final PageModel pageModel;
 	private final Canvas canvas;
 	private final FlowPane shapePane;
+	private final FlowPane currentShapePane;
 
 	private SimpleObjectProperty<Shape> currentDrawnShape = new SimpleObjectProperty<>();
 
@@ -51,28 +55,30 @@ public class PagePane extends FlowPane {
 		getChildren().add(contentPane);
 
 		shapePane = new FlowPane();
-		Bindings.bindContent(shapePane.getChildren(), pageModel.getShapes());
 		contentPane.getChildren().add(shapePane);
 
-		Polyline polyline1 = new Polyline(0, 0, 1, 1);
-		polyline1.setManaged(false);
-		pageModel.getShapes().add(polyline1);
+		currentShapePane = new FlowPane();
+		contentPane.getChildren().add(currentShapePane);
 
-		pageModel.pageLayoutProperty().addListener((observable, oldValue, newValue) -> {
-			canvas.setWidth(ScreenUtil.convertMmToPx(getPageModel().getPageLayout().getPageSize().getWidth()));
-			canvas.setHeight(ScreenUtil.convertMmToPx(getPageModel().getPageLayout().getPageSize().getHeight()));
-			updatePreviewImage();
-		});
+		pageModel.getShapes().addListener(new WeakListChangeListener<>(c -> {
+			shapePane.getChildren().setAll(pageModel.getShapes());
+		}));
 
 		currentDrawnShape.addListener((observable, oldValue, newValue) -> {
 			if (oldValue != null) {
-				shapePane.getChildren().remove(oldValue);
+				currentShapePane.getChildren().remove(oldValue);
 			}
 			if (newValue != null) {
 				newValue.setManaged(false);
-				shapePane.getChildren().add(newValue);
+				currentShapePane.getChildren().add(newValue);
 			}
 		});
+
+		pageModel.pageLayoutProperty().addListener(new WeakChangeListener<>((observable, oldValue, newValue) -> {
+			canvas.setWidth(ScreenUtil.convertMmToPx(getPageModel().getPageLayout().getPageSize().getWidth()));
+			canvas.setHeight(ScreenUtil.convertMmToPx(getPageModel().getPageLayout().getPageSize().getHeight()));
+			updatePreviewImage();
+		}));
 	}
 
 	public void updatePreviewImage() {

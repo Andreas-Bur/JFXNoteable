@@ -1,22 +1,22 @@
 package com.andreasbur.tools;
 
-import com.andreasbur.gui.ParentPane;
 import javafx.scene.control.ToggleButton;
+import javafx.scene.control.ToggleGroup;
 
 public class ToolFactory {
 
-	private final ParentPane parentPane;
+	private final ToggleGroup toggleGroup;
 	private final ToolEventHandlerFactory toolEventHandlerFactory;
 
-	public ToolFactory(ParentPane parentPane) {
-		this.parentPane = parentPane;
-		toolEventHandlerFactory = new ToolEventHandlerFactory(parentPane);
+	public ToolFactory(ToolEventHandlerFactory toolEventHandlerFactory) {
+		this.toolEventHandlerFactory = toolEventHandlerFactory;
+		toggleGroup = new ToolToggleGroup();
 	}
 
 	public ToggleButton createHandToolButton() {
 		ToggleButton handToolButton = new ToggleButton("Hand");
 		handToolButton.setUserData(toolEventHandlerFactory.createHandToolHandler());
-		handToolButton.setToggleGroup(parentPane.getToolEventDistributor().getToggleGroup());
+		handToolButton.setToggleGroup(toggleGroup);
 
 		return handToolButton;
 	}
@@ -24,7 +24,7 @@ public class ToolFactory {
 	public ToggleButton createPenToolButton() {
 		ToggleButton penToolButton = new ToggleButton("Pen");
 		penToolButton.setUserData(toolEventHandlerFactory.createPenToolHandler());
-		penToolButton.setToggleGroup(parentPane.getToolEventDistributor().getToggleGroup());
+		penToolButton.setToggleGroup(toggleGroup);
 
 		return penToolButton;
 	}
@@ -32,9 +32,12 @@ public class ToolFactory {
 	public ToggleButton createEraserToolButton() {
 		ToggleButton eraserToolButton = new ToggleButton("Eraser");
 		eraserToolButton.setUserData(toolEventHandlerFactory.createEraserToolHandler());
-		eraserToolButton.setToggleGroup(parentPane.getToolEventDistributor().getToggleGroup());
+		eraserToolButton.setToggleGroup(toggleGroup);
 
 		return eraserToolButton;
 	}
 
+	public ToggleGroup getToggleGroup() {
+		return toggleGroup;
+	}
 }

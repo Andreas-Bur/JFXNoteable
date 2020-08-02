@@ -6,11 +6,11 @@ import com.andreasbur.document.DocumentModel;
 import com.andreasbur.document.DocumentPane;
 import com.andreasbur.document.DocumentScalePane;
 import com.andreasbur.tools.ToolEventDistributor;
+import com.andreasbur.tools.ToolEventHandlerFactory;
 import com.andreasbur.tools.ToolFactory;
 import com.andreasbur.util.ScrollHandler;
 import com.andreasbur.util.ZoomHandler;
 import javafx.scene.control.SplitPane;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 
@@ -26,6 +26,7 @@ public class ParentPane extends BorderPane {
 	private final ScrollHandler scrollHandler;
 	private final ActionHandler actionHandler;
 	private final ToolEventDistributor toolEventDistributor;
+	private final ToolEventHandlerFactory toolEventHandlerFactory;
 	private final ToolFactory toolFactory;
 
 	private final DocumentPane documentPane;
@@ -37,8 +38,9 @@ public class ParentPane extends BorderPane {
 		zoomHandler = new ZoomHandler();
 		scrollHandler = new ScrollHandler();
 		actionHandler = new ActionHandler();
-		toolEventDistributor = new ToolEventDistributor();
-		toolFactory = new ToolFactory(this);
+		toolEventHandlerFactory = new ToolEventHandlerFactory(this);
+		toolFactory = new ToolFactory(toolEventHandlerFactory);
+		toolEventDistributor = new ToolEventDistributor(toolFactory.getToggleGroup());
 
 		documentModel = new DocumentModel();
 
@@ -69,26 +71,6 @@ public class ParentPane extends BorderPane {
 
 	}
 
-	public StatusBar getStatusBar() {
-		return statusBar;
-	}
-
-	public ToolbarPane getToolbarPane() {
-		return toolbarPane;
-	}
-
-	public DocumentPane getDocumentPane() {
-		return documentPane;
-	}
-
-	public DocumentScalePane getDocumentScalePane() {
-		return documentScalePane;
-	}
-
-	public DocumentSideBar getDocumentSideBar() {
-		return documentSideBar;
-	}
-
 	public ZoomHandler getZoomHandler() {
 		return zoomHandler;
 	}
@@ -99,14 +81,6 @@ public class ParentPane extends BorderPane {
 
 	public ActionHandler getActionHandler() {
 		return actionHandler;
-	}
-
-	public ToolEventDistributor getToolEventDistributor() {
-		return toolEventDistributor;
-	}
-
-	public DocumentModel getDocumentModel() {
-		return documentModel;
 	}
 
 	public DocumentController getDocumentController() {

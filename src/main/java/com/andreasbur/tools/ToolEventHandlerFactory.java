@@ -11,7 +11,7 @@ public class ToolEventHandlerFactory {
 	}
 
 	public ToolEventHandler createHandToolHandler() {
-		return new HandToolEventHandler(parentPane);
+		return new HandToolEventHandler(parentPane.getScrollHandler());
 	}
 
 	public ToolEventHandler createPenToolHandler() {

@@ -8,12 +8,17 @@ public class HandToolEventHandler implements ToolEventHandler {
 
 	private final ScrollHandler scrollHandler;
 
-	public HandToolEventHandler(ParentPane parentPane) {
-		this.scrollHandler = parentPane.getScrollHandler();
+	public HandToolEventHandler(ScrollHandler scrollHandler) {
+		this.scrollHandler = scrollHandler;
 	}
 
 	@Override
-	public void handleEvent(MouseEvent event) {
+	public void handlePageEvent(MouseEvent event) {
+
+	}
+
+	@Override
+	public void handleDocumentEvent(MouseEvent event) {
 
 	}
 

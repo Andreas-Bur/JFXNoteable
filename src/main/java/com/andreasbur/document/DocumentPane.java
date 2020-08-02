@@ -7,6 +7,7 @@ import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
+import javafx.event.WeakEventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
@@ -102,6 +103,7 @@ public class DocumentPane extends StackPane implements PageSelector {
 
 	public void setToolEventDistributor(ToolEventDistributor toolEventDistributor) {
 		this.toolEventDistributor = toolEventDistributor;
+		addEventHandler(MouseEvent.ANY, toolEventDistributor);
 		pagePaneList.forEach(pagePane -> pagePane.getContentPane().addEventHandler(MouseEvent.ANY, toolEventDistributor));
 	}
 

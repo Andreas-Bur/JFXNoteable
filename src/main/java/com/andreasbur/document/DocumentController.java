@@ -35,7 +35,7 @@ public class DocumentController {
 		});
 	}
 
-	private PageModel createPageModel() {
+	public PageModel createPageModel() {
 		PageModel pageModel;
 		if (documentModel.isPageSelected().get()) {
 			pageModel = new PageModel(documentModel.getSelectedPageModel().getPageLayout());

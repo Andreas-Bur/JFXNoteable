@@ -13,11 +13,8 @@ public class  PagePreview extends VBox {
 	private static final DropShadow pagePreviewShadow = new DropShadow(5, 2, 2, Color.BLACK);
 	private final ImageView imageView;
 	private final StackPane imageViewPane;
-	private final PagePane pagePane;
 
 	public PagePreview(PagePane pagePane) {
-
-		this.pagePane = pagePane;
 
 		imageView = new ImageView();
 		imageView.setPreserveRatio(true);
@@ -35,10 +32,6 @@ public class  PagePreview extends VBox {
 
 		getChildren().addAll(imageViewPane, pageIndexText);
 
-	}
-
-	public PagePane getPagePane() {
-		return pagePane;
 	}
 
 	public ImageView getImageView() {
