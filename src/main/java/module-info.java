@@ -9,6 +9,7 @@ module com.andreasbur {
     exports com.andreasbur.document;
     exports com.andreasbur.gui;
     exports com.andreasbur.page;
+    exports com.andreasbur.shapes;
     exports com.andreasbur.statusbar;
     exports com.andreasbur.tools;
     exports com.andreasbur.util;

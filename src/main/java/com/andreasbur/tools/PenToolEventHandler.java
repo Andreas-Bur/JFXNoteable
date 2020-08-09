@@ -3,15 +3,15 @@ package com.andreasbur.tools;
 import com.andreasbur.actions.ActionHandler;
 import com.andreasbur.actions.AddShapeAction;
 import com.andreasbur.page.PagePane;
+import com.andreasbur.shapes.FreehandLine;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.shape.Polyline;
 
 public class PenToolEventHandler implements ToolEventHandler {
 
 	private final ActionHandler actionHandler;
 
 	private PagePane pressedPagePane;
-	private Polyline polyline;
+	private FreehandLine freehandLine;
 
 	public PenToolEventHandler(ActionHandler actionHandler) {
 		this.actionHandler = actionHandler;
@@ -38,24 +38,24 @@ public class PenToolEventHandler implements ToolEventHandler {
 
 	private void initPolyline(PagePane pagePane) {
 		pressedPagePane = pagePane;
-		polyline = new Polyline();
-		pressedPagePane.setCurrentDrawnShape(polyline);
+		freehandLine = new FreehandLine();
+		pressedPagePane.setTemporaryDrawnShape(freehandLine);
 	}
 
 	private void addPointToPolyline(double x, double y) {
-		if (polyline != null) {
-			polyline.getPoints().addAll(x, y);
+		if (freehandLine != null) {
+			freehandLine.getPoints().addAll(x, y);
 		}
 	}
 
 	private void finishPolyline() {
-		if (polyline != null) {
-			pressedPagePane.setCurrentDrawnShape(null);
+		if (freehandLine != null) {
+			pressedPagePane.setTemporaryDrawnShape(null);
 
-			AddShapeAction addShapeAction = new AddShapeAction(pressedPagePane.getPageModel(), polyline);
+			AddShapeAction addShapeAction = new AddShapeAction(pressedPagePane.getPageModel(), freehandLine);
 			actionHandler.execute(addShapeAction);
 
-			polyline = null;
+			freehandLine = null;
 			pressedPagePane = null;
 		}
 	}

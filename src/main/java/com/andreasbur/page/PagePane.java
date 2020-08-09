@@ -1,5 +1,6 @@
 package com.andreasbur.page;
 
+import com.andreasbur.shapes.FreehandLine;
 import com.andreasbur.util.ScreenUtil;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
@@ -16,7 +17,6 @@ import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Polyline;
 import javafx.scene.shape.Shape;
 
 public class PagePane extends FlowPane {
@@ -29,9 +29,9 @@ public class PagePane extends FlowPane {
 	private final PageModel pageModel;
 	private final Canvas canvas;
 	private final FlowPane shapePane;
-	private final FlowPane currentShapePane;
+	private final FlowPane temporaryShapePane;
 
-	private SimpleObjectProperty<Shape> currentDrawnShape = new SimpleObjectProperty<>();
+	private SimpleObjectProperty<Shape> temporaryDrawnShape = new SimpleObjectProperty<>();
 
 	public enum Orientation {
 		PORTRAIT, LANDSCAPE
@@ -57,20 +57,18 @@ public class PagePane extends FlowPane {
 		shapePane = new FlowPane();
 		contentPane.getChildren().add(shapePane);
 
-		currentShapePane = new FlowPane();
-		contentPane.getChildren().add(currentShapePane);
+		temporaryShapePane = new FlowPane();
+		contentPane.getChildren().add(temporaryShapePane);
 
-		pageModel.getShapes().addListener(new WeakListChangeListener<>(c -> {
-			shapePane.getChildren().setAll(pageModel.getShapes());
-		}));
+		Bindings.bindContent(shapePane.getChildren(), pageModel.getShapes());
 
-		currentDrawnShape.addListener((observable, oldValue, newValue) -> {
+		temporaryDrawnShape.addListener((observable, oldValue, newValue) -> {
 			if (oldValue != null) {
-				currentShapePane.getChildren().remove(oldValue);
+				temporaryShapePane.getChildren().remove(oldValue);
 			}
 			if (newValue != null) {
 				newValue.setManaged(false);
-				currentShapePane.getChildren().add(newValue);
+				temporaryShapePane.getChildren().add(newValue);
 			}
 		});
 
@@ -97,8 +95,8 @@ public class PagePane extends FlowPane {
 		return pageModel;
 	}
 
-	public void setCurrentDrawnShape(Shape shape) {
-		currentDrawnShape.setValue(shape);
+	public void setTemporaryDrawnShape(Shape shape) {
+		temporaryDrawnShape.setValue(shape);
 	}
 
 	public StackPane getContentPane() {

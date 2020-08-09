@@ -19,7 +19,7 @@ public class ToolEventHandlerFactory {
 	}
 
 	public ToolEventHandler createEraserToolHandler() {
-		return new EraserToolEventHandler();
+		return new EraserToolEventHandler(parentPane.getActionHandler());
 	}
 
 }

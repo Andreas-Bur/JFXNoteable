@@ -8,6 +8,8 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.shape.Shape;
 
+import java.util.concurrent.CopyOnWriteArrayList;
+
 public class PageModel {
 	private final ObjectProperty<PageLayout> pageLayout;
 	private final IntegerProperty pageNumber;
@@ -16,7 +18,7 @@ public class PageModel {
 	public PageModel(PageLayout pageLayout) {
 		this.pageLayout = new SimpleObjectProperty<>(pageLayout);
 		this.pageNumber = new SimpleIntegerProperty(-1);
-		this.shapes = FXCollections.observableArrayList();
+		this.shapes = FXCollections.observableList(new CopyOnWriteArrayList<>());
 	}
 
 	public PageLayout getPageLayout() {

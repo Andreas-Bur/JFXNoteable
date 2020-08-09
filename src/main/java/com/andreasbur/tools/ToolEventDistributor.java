@@ -29,8 +29,7 @@ public class ToolEventDistributor implements EventHandler<MouseEvent> {
 
 			boolean isEventOnPage = false;
 
-			if (event.getSource() instanceof PagePane) {
-				PagePane pagePane = (PagePane) event.getSource();
+			if (event.getSource() instanceof PagePane pagePane) {
 				if (pagePane.getContentPane().getLayoutBounds().contains(event.getX(), event.getY())) {
 					isEventOnPage = true;
 				}

@@ -1,6 +1,7 @@
 package com.andreasbur.actions;
 
 import com.andreasbur.page.PageModel;
+import javafx.application.Platform;
 import javafx.scene.shape.Shape;
 
 public class AddShapeAction extends Action {
@@ -15,11 +16,15 @@ public class AddShapeAction extends Action {
 
 	@Override
 	protected void execute() {
-		pageModel.getShapes().add(shape);
+		Platform.runLater(() -> {
+			pageModel.getShapes().add(shape);
+		});
 	}
 
 	@Override
 	protected void undo() {
-		pageModel.getShapes().remove(shape);
+		Platform.runLater(() -> {
+			pageModel.getShapes().remove(shape);
+		});
 	}
 }
